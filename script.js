@@ -28,6 +28,7 @@ const gameBoard = () => {
         board[xCord][yCord] = val.getVal();
         printBoard();
         
+        
     }
 
 // this function will print the game board
@@ -72,7 +73,7 @@ const createPlayers = () => {
 function playerTurn() {
     let tCount = 0;
 
-     function win(){
+     function next(){
         if (tCount === 0 || tCount%2 === 0) {
             tCount += 1;
             console.log('Count is zero or even');
@@ -85,11 +86,28 @@ function playerTurn() {
         }
     }
 
-    const getNextPlayer = () => win();
+    const getNextPlayer = () => next();
 
     return (getNextPlayer);
 }
 
+// finding win conditions in the board array
+// win condition is same type of marker either in one row, column or diagonally
+
+function checkWin(){
+
+    for (let i=0; i<3; i++){
+        let temp = myboard.getBoard()[i].filter((x) => x === 1);
+        console.log(`Row ${i} - value 1 - length ${temp.length}`);
+        let temp2 = myboard.getBoard()[i].filter((x) => x === 2);
+        console.log(`Row ${i} - value 2 - length ${temp2.length}`);
+        
+        if ((temp.length = 3 )|| (temp2.length = 3)) {
+            console.log('we have a winner!')
+        }
+
+    }
+}
 
 // declare stuff here
 
@@ -98,16 +116,5 @@ let val = addVal();
 let myboard = gameBoard();
 let gameTurn = playerTurn();
 
-// let pTurn = () => {
-//     if (tCount === 0){
-//         pTurn = players.players.p2
-//         ++tCount;
-//     } else {
-//         pTurn = players.players.p1
-//         ++tCount;
-//     }}  
-
-
-// const gettCount = () => tCount;
-// const getpTurn = () => pTurn();
-// return {gettCount, getpTurn};
+// for (x of myboard.getBoard()) { console.log(x)}
+// for (x of myboard.getBoard()[1]) { console.log([x])}
