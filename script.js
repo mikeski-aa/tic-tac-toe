@@ -10,203 +10,229 @@ function gameBoard (){
 //  adding items to the new array within each board[i] location creates a 2D array of the board
         board[i] = [];
         for (let j = 0; j < columns; j++){
-            board[i].push(addVal().getVal());
+            board[i].push('0');
         }
     }
 
 //  this allows for extracting the gameboard.
     const getBoard = () => board;
-
 // this will allow us to mark spots on the board
     const markBoard = (yCord, xCord) => {
 
         console.log(board[0][0]);
         if (board[yCord][xCord] !== '0') {return (console.log('error not empty'))}
         
-        gameTurn();
-        val.addMarker(currTurn.value);
-        board[yCord][xCord] = val.getVal();
-        printBoard();   
+        board[yCord][xCord] = newcurr.val(); 
     }
-
 // this function will print the game board
-    function printBoard(){
+    const printBoard = () =>{
         console.table(getBoard());
     }
-
     return {getBoard, printBoard, markBoard};
-    
 } 
 
-// adds value to array
-
-const addVal = () => {
-    let value = '0';
-    
-    const addMarker = (x) => {
-        value = x;
-    }
-
-    const getVal = () => value;
-    return ({getVal, addMarker});
+function createPlayer1(pname){
+    const name = () => pname;
+    const val = () => 1;
+    return {name, val};
 }
-// create two players for the game
 
-const createPlayers = () => {
+function createPlayer2(pname){
+    const name = () => pname;
+    const val = () => 2;
+    return {name, val};
+}
+//create players here
+const player1 = createPlayer1('Mike');
+const player2 = createPlayer2('Jilf');
 
-        function player(name, val) {
-            const value = val;
-            return {name, value};
+// swap players - not first curr has to be P1 later on
+let newcurr ='';
+
+function switchPlayer(curr){
+    if (curr === player1) {curr = player2} else {curr = player1}
+    return (newcurr = curr);
+}
+function checkWin(){
+    //  for loop to check winner in each row  
+        for (let i=0; i<3; i++){
+            let tempArr = myboard.getBoard()[i];
+            checkArrMatch(tempArr);
+        }
+    
+        for (let i=0; i<3; i++){
+            let tempArr = [];
+            tempArr.push(myboard.getBoard()[0][i]);
+            tempArr.push(myboard.getBoard()[1][i]);
+            tempArr.push(myboard.getBoard()[2][i]);
+            checkArrMatch(tempArr);
+        }
+    
+//  check diagonally if [0][0], [1][1], [2][2] are the same
+        (function checkDiag() {
+            let tempArr = [];
+            for (let i = 0; i < 3; i++){
+                
+                tempArr.push(myboard.getBoard()[i][i]);        
+            }
+        checkArrMatch(tempArr);
+    })();
+//  and if [0][2], [1][1], [2][0] diag match
+        (function checkDiag() {
+            let tempArr = [];
+            tempArr.push(myboard.getBoard()[0][2]);
+            tempArr.push(myboard.getBoard()[1][1]);
+            tempArr.push(myboard.getBoard()[2][0]);          
+            checkArrMatch(tempArr);
+    })();
+//  checks for a tie
+    (function tieCheck(){
+
+        let counter = 0;
+        for (x of myboard.getBoard()) {
+            y = x.filter((x) => x === '0');
+            counter += y.length;
+        }
+        console.log(`Amount of available spaces is: ${counter}`);
+        if (counter === 0) {return(alert('We have a tie'))} else {console.log('NO TIE, GAME ON!')}
+    
+    })();
+
+    function checkArrMatch(tempArr) {
+        if (tempArr.filter((x) => x === player1.val()).length === 3) {
+         for (let i = 0; i < 5; i++ ){
+            console.log(`${i}, We have a winner WOOO - the winner is ${newcurr.name()}`)}
+            return (winStat = true);
+        } else if (tempArr.filter((x) => x === player2.val()).length === 3) {
+            for (let i = 0; i < 5; i++ ){
+            console.log(`${i}, We have a winner WOOO - the winner is ${newcurr.name()}`)}
+            return (winStat = true);
         }
         
-        let players = {
-            p1: player('Mike', 1),
-            p2: player('Joe', 2)
-        };
-
-        const gTest = () => players;
-        return {gTest}
-}
-//  figure out who's turn it is to play the game
-
-function playerTurn() {
-    let tCount = 0;
-    currTurn = createPlayers().gTest().p1
-
-     function next(){
-        if (tCount === 0 || tCount%2 === 0) {
-            tCount += 1;
-            console.log(`the tcount is ${tCount}`);
-            return (currTurn = createPlayers().gTest().p1);
-            
-        } else {
-            console.log(`Current t score is ${tCount}`);
-            tCount += 1;
-            return (currTurn = createPlayers().gTest().p2);
-        }
+    }
+    if (winStat === true) {console.log('GAME OVER')}
     }
 
-    const getNextPlayer = () => next();
-    return (getNextPlayer);
-}
-
-//  finding win conditions in the board array
-//  win condition is same type of marker either in one row, column or diagonally
-
-function checkWin(){
+const myboard = gameBoard();
 let winStat = false;
-//  for loop to check winner in each row  
-    for (let i=0; i<3; i++){
-        let tempArr = myboard.getBoard()[i];
-        checkArrMatch(tempArr);
-    }
 
-    for (let i=0; i<3; i++){
-        let tempArr = [];
-        tempArr.push(myboard.getBoard()[0][i]);
-        tempArr.push(myboard.getBoard()[1][i]);
-        tempArr.push(myboard.getBoard()[2][i]);
-        console.log(`${i} column values are ${tempArr}`);
-        checkArrMatch(tempArr);
-    }
+//test the game
+function playGame(){
 
-//  check diagonally if [0][0], [1][1], [2][2] are the same
-    (function checkDiag() {
-        let tempArr = [];
-        for (let i = 0; i < 3; i++){
-            
-            tempArr.push(myboard.getBoard()[i][i]);
-            console.log(tempArr);
+
+    console.log('Time to play Tic Tac Toe');
+    console.log(`Player 1 is ${player1.name()}`);
+    console.log(`Player 2 is ${player2.name()}`);
+
+    console.table(myboard.printBoard());
+    newcurr = player1;
+    console.log('Player 1 type the coordinates of your move!')
+
+    myboard.markBoard(0,2);;;
+    console.table(myboard.printBoard());
+    checkWin();
+    switchPlayer(newcurr);
+    console.log(`Next turn is by ${newcurr.name()}`);
+
+    myboard.markBoard(0,1);
+    console.table(myboard.printBoard());
+    checkWin();
+    switchPlayer(newcurr);
+    console.log(`Next turn is by ${newcurr.name()}`);
+
+    myboard.markBoard(1,1);
+    console.table(myboard.printBoard());
+    checkWin();
+    switchPlayer(newcurr);
+    console.log(`Next turn is by ${newcurr.name()}`);
+
+    myboard.markBoard(2,2);
+    console.table(myboard.printBoard());
+    checkWin();
+    switchPlayer(newcurr);
+    console.log(`Next turn is by ${newcurr.name()}`);
+
+    myboard.markBoard(2,1);
+    console.table(myboard.printBoard());
+    checkWin();
+    switchPlayer(newcurr);
+    console.log(`Next turn is by ${newcurr.name()}`);
+    
+    myboard.markBoard(2,0);
+    console.table(myboard.printBoard());
+    checkWin();
+    switchPlayer(newcurr);
+    console.log(`Next turn is by ${newcurr.name()}`);
+
+    myboard.markBoard(0,0);
+    console.table(myboard.printBoard());
+    checkWin();
+    switchPlayer(newcurr);
+    console.log(`Next turn is by ${newcurr.name()}`);
+
+    myboard.markBoard(1,0);
+    console.table(myboard.printBoard());
+    checkWin();
+    switchPlayer(newcurr);
+    console.log(`Next turn is by ${newcurr.name()}`);
+
+    myboard.markBoard(1,2);
+    console.table(myboard.printBoard());
+    checkWin();
+    switchPlayer(newcurr);
+    console.log(`Next turn is by ${newcurr.name()}`);
+    
+
+}
+
+(function domInt(){
+    const grid = document.querySelector('.gameboard');
+    
+    for (let j=0; j<3; j++) {
+        for (let i=0; i<3; i++) {
+        const newDiv = document.createElement('div');
+        newDiv.classList.add(`div${j}${i}`);
+        newDiv.textContent = '';
+        grid.appendChild(newDiv)
         }
-    checkArrMatch(tempArr);
-})();
-//  and if [0][2], [1][1], [2][0] diag match
-    (function checkDiag() {
-        let tempArr = [];
-        tempArr.push(myboard.getBoard()[0][2]);
-        tempArr.push(myboard.getBoard()[1][1]);
-        tempArr.push(myboard.getBoard()[2][0]);
-        console.log(tempArr);
-        checkArrMatch(tempArr);
+    }
 })();
 
-return ({winStat});
-}
- 
-
-function checkArrMatch(tempArr) {
-    if (tempArr.filter((x) => x === createPlayers().gTest().p1.value).length === 3) {
-        console.log(`3 match! ${createPlayers().gTest().p1.name} is the winner!`);
-//  rest of the game needs to be notified that a winner was found
-        return (winStat = true);
-    } else if (tempArr.filter((x) => x === createPlayers().gTest().p2.value).length === 3) {
-        console.log(`3 match! ${createPlayers().gTest().p2.name} is the winner!`);
-//  rest of the game needs to be notified that a winner was found
-        return (winStat = true);
+function updateDom(){
+    for (let j=0; j<3; j++) {
+        for (let i=0; i<3; i++) {
+        let test = document.querySelector(`.div${j}${i}`)
+        if (myboard.getBoard()[j][i] === 1) {
+            test.textContent = 'X';
+        } else if (myboard.getBoard()[j][i] === 2) {
+            test.textContent = 'O';
+        } 
+        }
     }
 }
-  
-(function gameLoop(){
-    // let val = addVal();
-    // let myboard = gameBoard();
-    // let gameTurn = playerTurn();
 
-    gameBoard().printBoard();
-    console.log(`${createPlayers().gTest().p1.name} will be going first`)
-})();
-  
+const divselect = document.querySelector('.gameboard');
+divselect.addEventListener('click', (e) => {
+    console.log(e.target.classList);
+    let text = e.target.classList;
+    console.log(text.toString());
+})
 
-//  declare stuff here
+function domHandle() {
+    let dom = {
+        click: function() {
 
-// let players = createPlayers();
+        }
+    }
+}
 
-
-//  for (x of myboard.getBoard()) { console.log(x)}
-//  for (x of myboard.getBoard()[1]) { console.log([x])}
-
-// myboard.markBoard(0, 0);
-// myboard.markBoard(0, 2);
-// myboard.markBoard(2, 0);
-// myboard.markBoard(2, 1);
-// myboard.markBoard(2, 2);
-
-
-
-
-
-//for testing rows p1 win:
-// myboard.markBoard(0,0);
-// myboard.markBoard(1,0);
-// myboard.markBoard(0,1);
-// myboard.markBoard(2,0);
-// myboard.markBoard(0,2);
-
-//for testing rows p2 win
-// myboard.markBoard(1,0);
-// myboard.markBoard(0,0);
-// myboard.markBoard(2,0);
-// myboard.markBoard(0,1);
-// myboard.markBoard(2,2);
-// myboard.markBoard(0,2);
-
-//for testing cols p1 win
-// myboard.markBoard(0,1);
-// myboard.markBoard(0,0);
-// myboard.markBoard(1,1);
-// myboard.markBoard(0,2);
-// myboard.markBoard(2,1);
-
-
-// for testing diag 
 // myboard.markBoard(0,0);
 // myboard.markBoard(0,1);
 // myboard.markBoard(1,1);
 // myboard.markBoard(0,2);
 // myboard.markBoard(2,2);
 
-// for testing diag other way
-// myboard.markBoard(0,2);
-// myboard.markBoard(0,1);
-// myboard.markBoard(1,1);
-// myboard.markBoard(2,2);
-// myboard.markBoard(2,0);
+
+for (x of myboard.getBoard()[1]) {
+    console.log(`test ${x}`)
+}

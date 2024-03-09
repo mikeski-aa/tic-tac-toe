@@ -1,0 +1,51 @@
+body {
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    
+}
+
+.container {
+    display: grid;
+    justify-content: center;
+    grid-template-rows: 1fr 10fr 1fr;
+    width: 100%;
+    align-items: center;
+  
+}
+
+.header {
+
+}
+
+.gameboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    width: 30rem;
+    height: 30rem;
+    justify-content: center;
+    font-size: 5rem;
+    
+    border: 1px solid black;
+
+    
+}
+.gameboard>div {
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 5rem;
+    border: 1px solid black;
+}
+
+.gameboard>div>button{
+    display: flex;
+    width: 160px;
+    font-size: 5rem;
+    align-items: center;
+    justify-content: center;
+}
+.actionButtons {
+ 
+}
