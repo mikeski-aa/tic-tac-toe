@@ -1,4 +1,5 @@
-//  function to create a 2d array of the game space
+(function tictactoe () {
+    //  function to create a 2d array of the game space
 function gameBoard (){
     const rows = 3; 
     const columns = 3;
@@ -28,7 +29,17 @@ function gameBoard (){
     const printBoard = () =>{
         console.table(getBoard());
     }
-    return {getBoard, printBoard, markBoard};
+// this function will reset the game board to original state
+    const resetBoard = () => {
+        for (let i = 0; i < rows; i++){
+        board[i] = [];
+        for (let j = 0; j < columns; j++){
+        board[i].push('0');
+        }
+     }
+    }
+
+    return {getBoard, printBoard, markBoard, resetBoard};
 } 
 
 function createPlayer1(pname){
@@ -43,8 +54,7 @@ function createPlayer2(pname){
     return {name, val};
 }
 //create players here
-const player1 = createPlayer1('Mike');
-const player2 = createPlayer2('Jilf');
+
 
 // swap players - not first curr has to be P1 later on
 let newcurr ='';
@@ -94,13 +104,14 @@ function checkWin(){
             counter += y.length;
         }
         console.log(`Amount of available spaces is: ${counter}`);
-        if (counter === 0) {return(alert('We have a tie'))} else {console.log('NO TIE, GAME ON!')}
+        if (counter === 0) {
+            return(winStat = true, alert('We have a tie'))} else {console.log('NO TIE, GAME ON!')}
     
     })();
 
     function checkArrMatch(tempArr) {
         if (tempArr.filter((x) => x === player1.val()).length === 3) {
-         for (let i = 0; i < 5; i++ ){
+            for (let i = 0; i < 5; i++ ){
             console.log(`${i}, We have a winner WOOO - the winner is ${newcurr.name()}`)}
             return (winStat = true);
         } else if (tempArr.filter((x) => x === player2.val()).length === 3) {
@@ -113,126 +124,126 @@ function checkWin(){
     if (winStat === true) {console.log('GAME OVER')}
     }
 
+
+
+
+
+function domThings() {
+    
+    const init = ()=>{
+        const grid = document.querySelector('.gameboard');
+        
+        for (let j=0; j<3; j++) {
+            for (let i=0; i<3; i++) {
+            const newDiv = document.createElement('button');
+            newDiv.classList.add(`div${j}${i}`);
+            newDiv.textContent = '';
+            grid.appendChild(newDiv);
+            }
+        }
+    };
+
+    const updateDom = () => {
+        for (let j=0; j<3; j++) {
+            for (let i=0; i<3; i++) {
+            let test = document.querySelector(`.div${j}${i}`)
+            if (myboard.getBoard()[j][i] === 1) {
+                test.textContent = 'X';
+            } else if (myboard.getBoard()[j][i] === 2) {
+                test.textContent = 'O';
+            } 
+            }
+        }
+    }
+
+    const clearDomBoard = () => {
+        for (let j=0; j<3; j++) {
+            for (let i=0; i<3; i++) {
+            let test = document.querySelector(`.div${j}${i}`)
+                test.textContent = '';
+            }
+        }
+    }
+
+    const playGame = () => {
+        let divselect = document.querySelector('.gameboard');
+       
+        
+        divselect.addEventListener('click', (e) => {
+
+            if (winStat === true) {
+                console.log('I AM WORKING CORRECTLY YOU CANT CLICK ANYTHING');
+                divselect = 'null';
+                return (divselect);
+            } else {
+            
+            let tarVal = e.target.classList;
+            let coord = tarVal.value.slice(3).split('');
+            console.log(coord);
+
+            
+            console.log(`${newcurr.name()} type the coordinates of your move!`);
+            myboard.markBoard(coord[0],coord[1]);
+            testDOM.updateDom();
+            checkWin();
+            switchPlayer(newcurr);
+            displayCurrentMove(newcurr.name());
+            console.log(`Next turn is by ${newcurr.name()}`);
+            }         
+        
+        })};
+
+    const resetGame = () => {
+        let resetBtn = document.querySelector('.resetBoard');
+
+        resetBtn.addEventListener('click', () => {
+            myboard.resetBoard();
+            testDOM.clearDomBoard();
+            newcurr = player1;
+            winStat = false;
+            displayCurrentMove(newcurr.name());
+
+        })
+    }
+    
+    const addPlayerName = (name) => {
+        let addBtn = document.querySelector('.addPlay');
+
+        addBtn.addEventListener('click', () => {
+            if (playercounter === 0){
+            let playername = prompt('Please enter the name of the first player');
+            console.log(playername);
+            player1 = createPlayer1(playername);
+            displayCurrentMove(player1.name());
+            return (playercounter++, newcurr = player1);
+        } else if (playercounter === 1){
+            let playername = prompt('Please enter the name of the second player');
+            console.log(playername);
+            player2 = createPlayer2(playername);
+            return (playercounter++, player2);
+        }})
+    }
+
+    const displayCurrentMove = (pname) => {  
+        let currentMove = document.querySelector('.currentPlayer');
+        if (winStat !== true){
+        currentMove.textContent = `${pname}'s move!`
+    } else {currentMove.textContent = `WE HAVE A WINNER`}
+    }
+
+    return {init, updateDom, playGame, resetGame, clearDomBoard, addPlayerName, displayCurrentMove}
+}
+
 const myboard = gameBoard();
 let winStat = false;
+const testDOM = domThings();
+playercounter = 0;
+testDOM.addPlayerName();
 
-//test the game
-function playGame(){
+testDOM.init();
+testDOM.playGame();
+testDOM.resetGame();
 
 
-    console.log('Time to play Tic Tac Toe');
-    console.log(`Player 1 is ${player1.name()}`);
-    console.log(`Player 2 is ${player2.name()}`);
 
-    console.table(myboard.printBoard());
-    newcurr = player1;
-    console.log('Player 1 type the coordinates of your move!')
-
-    myboard.markBoard(0,2);;;
-    console.table(myboard.printBoard());
-    checkWin();
-    switchPlayer(newcurr);
-    console.log(`Next turn is by ${newcurr.name()}`);
-
-    myboard.markBoard(0,1);
-    console.table(myboard.printBoard());
-    checkWin();
-    switchPlayer(newcurr);
-    console.log(`Next turn is by ${newcurr.name()}`);
-
-    myboard.markBoard(1,1);
-    console.table(myboard.printBoard());
-    checkWin();
-    switchPlayer(newcurr);
-    console.log(`Next turn is by ${newcurr.name()}`);
-
-    myboard.markBoard(2,2);
-    console.table(myboard.printBoard());
-    checkWin();
-    switchPlayer(newcurr);
-    console.log(`Next turn is by ${newcurr.name()}`);
-
-    myboard.markBoard(2,1);
-    console.table(myboard.printBoard());
-    checkWin();
-    switchPlayer(newcurr);
-    console.log(`Next turn is by ${newcurr.name()}`);
-    
-    myboard.markBoard(2,0);
-    console.table(myboard.printBoard());
-    checkWin();
-    switchPlayer(newcurr);
-    console.log(`Next turn is by ${newcurr.name()}`);
-
-    myboard.markBoard(0,0);
-    console.table(myboard.printBoard());
-    checkWin();
-    switchPlayer(newcurr);
-    console.log(`Next turn is by ${newcurr.name()}`);
-
-    myboard.markBoard(1,0);
-    console.table(myboard.printBoard());
-    checkWin();
-    switchPlayer(newcurr);
-    console.log(`Next turn is by ${newcurr.name()}`);
-
-    myboard.markBoard(1,2);
-    console.table(myboard.printBoard());
-    checkWin();
-    switchPlayer(newcurr);
-    console.log(`Next turn is by ${newcurr.name()}`);
-    
-
-}
-
-(function domInt(){
-    const grid = document.querySelector('.gameboard');
-    
-    for (let j=0; j<3; j++) {
-        for (let i=0; i<3; i++) {
-        const newDiv = document.createElement('div');
-        newDiv.classList.add(`div${j}${i}`);
-        newDiv.textContent = '';
-        grid.appendChild(newDiv)
-        }
-    }
 })();
-
-function updateDom(){
-    for (let j=0; j<3; j++) {
-        for (let i=0; i<3; i++) {
-        let test = document.querySelector(`.div${j}${i}`)
-        if (myboard.getBoard()[j][i] === 1) {
-            test.textContent = 'X';
-        } else if (myboard.getBoard()[j][i] === 2) {
-            test.textContent = 'O';
-        } 
-        }
-    }
-}
-
-const divselect = document.querySelector('.gameboard');
-divselect.addEventListener('click', (e) => {
-    console.log(e.target.classList);
-    let text = e.target.classList;
-    console.log(text.toString());
-})
-
-function domHandle() {
-    let dom = {
-        click: function() {
-
-        }
-    }
-}
-
-// myboard.markBoard(0,0);
-// myboard.markBoard(0,1);
-// myboard.markBoard(1,1);
-// myboard.markBoard(0,2);
-// myboard.markBoard(2,2);
-
-
-for (x of myboard.getBoard()[1]) {
-    console.log(`test ${x}`)
-}
