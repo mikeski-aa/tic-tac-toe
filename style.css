@@ -46,6 +46,25 @@ body {
     align-items: center;
     justify-content: center;
 }
+.gameboard>button:hover{
+    background-color: yellow;
+    cursor: pointer;
+}
+
+[class*='X'] {
+    background-image: url(cross-svgrepo-com.svg);
+    background-size: 160px;
+    background-color: cyan;
+
+
+}
+
+[class*='O'] {
+    background-image: url(circle-svgrepo-com.svg);
+    background-size:contain;
+    background-color: peachpuff;
+}
+
 .actionButtons {
  
 }

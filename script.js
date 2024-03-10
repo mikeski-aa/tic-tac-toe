@@ -1,5 +1,4 @@
-(function tictactoe () {
-    //  function to create a 2d array of the game space
+//  function to create a 2d array of the game space
 function gameBoard (){
     const rows = 3; 
     const columns = 3;
@@ -108,7 +107,7 @@ function checkWin(){
             return(winStat = true, alert('We have a tie'))} else {console.log('NO TIE, GAME ON!')}
     
     })();
-
+//  function checks for in a row matches
     function checkArrMatch(tempArr) {
         if (tempArr.filter((x) => x === player1.val()).length === 3) {
             for (let i = 0; i < 5; i++ ){
@@ -126,7 +125,7 @@ function checkWin(){
 
 
 
-
+//  object for creating dom elements and interacting with the play board
 
 function domThings() {
     
@@ -148,9 +147,9 @@ function domThings() {
             for (let i=0; i<3; i++) {
             let test = document.querySelector(`.div${j}${i}`)
             if (myboard.getBoard()[j][i] === 1) {
-                test.textContent = 'X';
+                test.classList.add('X');
             } else if (myboard.getBoard()[j][i] === 2) {
-                test.textContent = 'O';
+                test.classList.add('O');
             } 
             }
         }
@@ -161,6 +160,8 @@ function domThings() {
             for (let i=0; i<3; i++) {
             let test = document.querySelector(`.div${j}${i}`)
                 test.textContent = '';
+                test.classList.remove('O');
+                test.classList.remove('X');
             }
         }
     }
@@ -180,9 +181,7 @@ function domThings() {
             let tarVal = e.target.classList;
             let coord = tarVal.value.slice(3).split('');
             console.log(coord);
-
-            
-            console.log(`${newcurr.name()} type the coordinates of your move!`);
+            if (myboard.getBoard()[coord[0]][coord[1]] !== '0') {return (alert('ERROR NOT EMPTY'), console.log('error not empty'))}
             myboard.markBoard(coord[0],coord[1]);
             testDOM.updateDom();
             checkWin();
@@ -234,6 +233,9 @@ function domThings() {
     return {init, updateDom, playGame, resetGame, clearDomBoard, addPlayerName, displayCurrentMove}
 }
 
+let player1 = createPlayer1('Mike');
+let player2 = createPlayer2('Jiff');
+newcurr = player1;
 const myboard = gameBoard();
 let winStat = false;
 const testDOM = domThings();
@@ -246,4 +248,3 @@ testDOM.resetGame();
 
 
 
-})();
