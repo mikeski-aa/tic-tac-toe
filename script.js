@@ -1,4 +1,4 @@
-//  function to create a 2d array of the game space
+(function ticTacToe(){//  function to create a 2d array of the game space
 function gameBoard (){
     const rows = 3; 
     const columns = 3;
@@ -44,19 +44,19 @@ function gameBoard (){
 function createPlayer1(pname){
     const name = () => pname;
     const val = () => 1;
-    return {name, val};
+    let score = 0;
+    let marker = 'CROSS';
+    return {name, val, score, marker};
 }
 
 function createPlayer2(pname){
     const name = () => pname;
     const val = () => 2;
-    return {name, val};
+    let score = 0;
+    let marker = 'CIRCLE';
+    return {name, val, score, marker};
 }
-//create players here
 
-
-// swap players - not first curr has to be P1 later on
-let newcurr ='';
 
 function switchPlayer(curr){
     if (curr === player1) {curr = player2} else {curr = player1}
@@ -104,23 +104,19 @@ function checkWin(){
         }
         console.log(`Amount of available spaces is: ${counter}`);
         if (counter === 0) {
-            return(winStat = true, alert('We have a tie'))} else {console.log('NO TIE, GAME ON!')}
+            return(drawStat = true)} else {console.log('NO TIE, GAME ON!')}
     
     })();
 //  function checks for in a row matches
     function checkArrMatch(tempArr) {
         if (tempArr.filter((x) => x === player1.val()).length === 3) {
-            for (let i = 0; i < 5; i++ ){
-            console.log(`${i}, We have a winner WOOO - the winner is ${newcurr.name()}`)}
             return (winStat = true);
         } else if (tempArr.filter((x) => x === player2.val()).length === 3) {
-            for (let i = 0; i < 5; i++ ){
-            console.log(`${i}, We have a winner WOOO - the winner is ${newcurr.name()}`)}
             return (winStat = true);
         }
         
     }
-    if (winStat === true) {console.log('GAME OVER')}
+    if (winStat === true || drawStat === true) {console.log('GAME OVER')}
     }
 
 
@@ -172,22 +168,32 @@ function domThings() {
         
         divselect.addEventListener('click', (e) => {
 
-            if (winStat === true) {
-                console.log('I AM WORKING CORRECTLY YOU CANT CLICK ANYTHING');
+            if (winStat === true || drawStat === true) {
                 divselect = 'null';
-                return (divselect);
+                return;
             } else {
             
             let tarVal = e.target.classList;
             let coord = tarVal.value.slice(3).split('');
-            console.log(coord);
-            if (myboard.getBoard()[coord[0]][coord[1]] !== '0') {return (alert('ERROR NOT EMPTY'), console.log('error not empty'))}
+            
+
+// check if field is empty
+
+            if (myboard.getBoard()[coord[0]][coord[1]] !== '0') {
+                return (alert('ERROR NOT EMPTY'), console.log('error not empty'))
+            }
+
+// proceed with game if it is
+
             myboard.markBoard(coord[0],coord[1]);
             testDOM.updateDom();
             checkWin();
-            switchPlayer(newcurr);
-            displayCurrentMove(newcurr.name());
-            console.log(`Next turn is by ${newcurr.name()}`);
+            testDOM.displayWinner(winStat, drawStat);
+            testDOM.drawAnnounce(drawStat);
+
+            if (winStat === false && drawStat === false)
+            {switchPlayer(newcurr);
+            testDOM.displayCurrentMove(newcurr.name(), newcurr.marker)}
             }         
         
         })};
@@ -200,7 +206,8 @@ function domThings() {
             testDOM.clearDomBoard();
             newcurr = player1;
             winStat = false;
-            displayCurrentMove(newcurr.name());
+            drawStat = false;
+            displayCurrentMove(newcurr.name(), newcurr.marker);
 
         })
     }
@@ -211,40 +218,87 @@ function domThings() {
         addBtn.addEventListener('click', () => {
             if (playercounter === 0){
             let playername = prompt('Please enter the name of the first player');
-            console.log(playername);
+            if (playername === null) {return(alert('ERROR player name cannot be blank!'))};
             player1 = createPlayer1(playername);
-            displayCurrentMove(player1.name());
             return (playercounter++, newcurr = player1);
         } else if (playercounter === 1){
             let playername = prompt('Please enter the name of the second player');
-            console.log(playername);
+            if (playername === null) {return(alert('ERROR player name cannot be blank!'))};
             player2 = createPlayer2(playername);
-            return (playercounter++, player2);
+            playercounter++;
+            testDOM.boardVisibility(playercounter);
+            displayCurrentMove(player1.name(), player1.marker);
+            return (playercounter, player2);
         }})
     }
 
-    const displayCurrentMove = (pname) => {  
+    const displayCurrentMove = (pname, pmarker) => {  
         let currentMove = document.querySelector('.currentPlayer');
         if (winStat !== true){
-        currentMove.textContent = `${pname}'s move!`
-    } else {currentMove.textContent = `WE HAVE A WINNER`}
+        currentMove.textContent = `${pname}'s move (${pmarker})!`
+    }
     }
 
-    return {init, updateDom, playGame, resetGame, clearDomBoard, addPlayerName, displayCurrentMove}
+    const boardVisibility = (value) => {
+        let boardVis = document.querySelector('div>.gameboard');
+        let buttonVis = document.querySelector('.addPlay');
+        let resetBtn = document.querySelector('.resetBoard');
+        if (value === 2) {      
+            boardVis.style.visibility = 'visible';
+            buttonVis.style.visibility = 'hidden';
+            resetBtn.style.visibility = 'visible';
+        } else {
+            boardVis.style.visibility = 'hidden';
+            buttonVis.style.visibility = 'visible';
+            resetBtn.style.visibility = 'hidden';
+        }
+    }
+
+    const displayWinner = (winStat) => {
+        if (winStat === true) {
+            let currMessage = document.querySelector('.currentPlayer');
+            currMessage.textContent = `${newcurr.name()} is the winner!`;
+            newcurr.score += 1;
+            if (newcurr.val() === 1) {
+                let p1msg = document.querySelector('.player1');
+                p1msg.style.visibility = 'visible';
+                p1msg.textContent = `${newcurr.name()}'s score is: ${newcurr.score}`;
+            } else {
+                let p2msg = document.querySelector('.player2');
+                p2msg.style.visibility = 'visible';
+                p2msg.textContent = `${newcurr.name()}'s score is: ${newcurr.score}`;    
+            }
+        }  
+    }
+
+    const drawAnnounce = (drawStat) => {
+        if (drawStat === true && winStat === false) {
+            let currMessage = document.querySelector('.currentPlayer');
+            currMessage.textContent = `WE HAVE A DRAW`;
+
+        }
+    }
+    
+    return {init, updateDom, playGame, resetGame, clearDomBoard, 
+        addPlayerName, displayCurrentMove, boardVisibility, displayWinner, drawAnnounce}
 }
 
-let player1 = createPlayer1('Mike');
-let player2 = createPlayer2('Jiff');
-newcurr = player1;
+
+
+// setting initial game conditions 
 const myboard = gameBoard();
 let winStat = false;
+let drawStat = false;
 const testDOM = domThings();
 playercounter = 0;
+testDOM.boardVisibility(playercounter);
 testDOM.addPlayerName();
-
 testDOM.init();
+
+
 testDOM.playGame();
-testDOM.resetGame();
+testDOM.resetGame();}
 
 
 
+)();

@@ -1,22 +1,46 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
 body {
     height: 100vh;
     width: 100vw;
     margin: 0;
     padding: 0;
+    background: rgb(255,95,114);
+    background: linear-gradient(0deg, rgba(255,95,114,1) 0%, rgba(239,253,96,1) 100%);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     
 }
-
+h1 {
+    font-size: 3rem;
+}
 .container {
-    display: grid;
+    display: flex;
+    flex-direction: column;
     justify-content: center;
-    grid-template-rows: 1fr 10fr 1fr;
     width: 100%;
     align-items: center;
+
   
 }
 
-.header {
+.tally {
+    display: flex;
+    font-weight: bold;
+    gap: 2em;
+}
 
+
+.header {
+    display: grid;
+    justify-items: center;
+    gap: 1em;
+}
+
+.currentPlayer {
+    font-size: 2em;
 }
 
 .gameboard {
@@ -47,7 +71,7 @@ body {
     justify-content: center;
 }
 .gameboard>button:hover{
-    background-color: yellow;
+    background-color:#FCCB1D;
     cursor: pointer;
 }
 
@@ -66,5 +90,24 @@ body {
 }
 
 .actionButtons {
- 
+    display: grid;
+    justify-self: center;
+    grid-template-rows: 1fr 1fr;
+    margin-bottom: 2%;
+    
 }
+
+.actionButtons>button {
+    width: 6em;
+    height: 2em;
+    border-radius: 12px;
+    font-size: 1em;
+    border: 0;
+}
+
+.actionButtons>button:hover {
+    cursor: pointer;
+    background-color: black;
+    color: white;
+}
+
